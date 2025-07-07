@@ -1,14 +1,37 @@
 package com.universo.fsbo.service.impl;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.universo.fsbo.dto.PriceEstimationDto;
 import com.universo.fsbo.dto.PropertyDto;
+import com.universo.fsbo.dto.UserDto;
+import com.universo.fsbo.dto.mapper.PropertyMapper;
+import com.universo.fsbo.entity.PropertyEntity;
+import com.universo.fsbo.repository.PropertyRepository;
 import com.universo.fsbo.service.PropertyService;
 
 @Service
 public class PropertyServiceImpl implements PropertyService {
 
+	@Autowired
+    private PropertyRepository propertyRepository;
+	
+	@Autowired
+	private PropertyMapper propertyMapper;
+
+	/**
+	 * Obtener propiedades de un usuario
+	 */
+	public List<PropertyDto> getAllPropertiesByUser(String userId) {
+	    List<PropertyEntity> properties = propertyRepository.findByUserId(userId);
+	    return properties.stream()
+	    		.map(propertyMapper::convertToDto)
+	            .toList();
+	}
+	
 	/**
 	 * Calcular Rango de precio del valor estimado de la vivienda
 	 */
@@ -67,4 +90,51 @@ public class PropertyServiceImpl implements PropertyService {
         return base;
     }
 
+    /**
+     * Almacenar Propiedad
+     * Se almacena la propiedad junto con el usuario solicitante y los importes estimados para la vivienda
+     */
+    @Override
+    public PriceEstimationDto saveProperty(PropertyDto propertyDto, PriceEstimationDto estimationDto, UserDto userDto) {
+        PropertyEntity entity = new PropertyEntity();
+
+        // Datos del inmueble
+        entity.setPropertyType(propertyDto.getPropertyType());
+        entity.setBuiltArea(propertyDto.getBuiltArea());
+        entity.setBedrooms(propertyDto.getBedrooms());
+        entity.setBathrooms(propertyDto.getBathrooms());
+        entity.setFloor(propertyDto.getFloor());
+        entity.setCondition(propertyDto.getCondition());
+        entity.setDescription(propertyDto.getDescription());
+
+        entity.setExterior(propertyDto.isExterior());
+        entity.setHasElevator(propertyDto.isHasElevator());
+        entity.setHasParking(propertyDto.isHasParking());
+        entity.setHasStorageRoom(propertyDto.isHasStorageRoom());
+        entity.setHasAirConditioning(propertyDto.isHasAirConditioning());
+        entity.setHasBalconyOrTerrace(propertyDto.isHasBalconyOrTerrace());
+        entity.setHasPool(propertyDto.isHasPool());
+
+        entity.setCountry(propertyDto.getCountry());
+        entity.setRegion(propertyDto.getRegion());
+        entity.setProvince(propertyDto.getProvince());
+        entity.setCity(propertyDto.getCity());
+        entity.setDistrict(propertyDto.getDistrict());
+        entity.setNeighborhood(propertyDto.getNeighborhood());
+
+        // Estimaciones
+        entity.setMinSalePrice(estimationDto.getMinSalePrice());
+        entity.setMaxSalePrice(estimationDto.getMaxSalePrice());
+        entity.setMinRentalPrice(estimationDto.getMinRentalPrice());
+        entity.setMaxRentalPrice(estimationDto.getMaxRentalPrice());
+
+        // Usuario asociado
+        entity.setUserId(userDto.getId());
+
+        // Guardar en base de datos
+        propertyRepository.save(entity);
+
+        return estimationDto;
+    }
+    
 }
