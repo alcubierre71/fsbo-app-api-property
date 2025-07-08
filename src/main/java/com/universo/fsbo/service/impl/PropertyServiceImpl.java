@@ -10,7 +10,9 @@ import com.universo.fsbo.dto.PropertyDto;
 import com.universo.fsbo.dto.UserDto;
 import com.universo.fsbo.dto.mapper.PropertyMapper;
 import com.universo.fsbo.entity.PropertyEntity;
+import com.universo.fsbo.entity.ValuationEntity;
 import com.universo.fsbo.repository.PropertyRepository;
+import com.universo.fsbo.repository.ValuationRepository;
 import com.universo.fsbo.service.PropertyService;
 
 @Service
@@ -19,18 +21,35 @@ public class PropertyServiceImpl implements PropertyService {
 	@Autowired
     private PropertyRepository propertyRepository;
 	
+//	@Autowired
+//    private ValuationRepository valuationRepository;
+	
 	@Autowired
 	private PropertyMapper propertyMapper;
 
 	/**
 	 * Obtener propiedades de un usuario
 	 */
+	@Override
 	public List<PropertyDto> getAllPropertiesByUser(String userId) {
 	    List<PropertyEntity> properties = propertyRepository.findByUserId(userId);
 	    return properties.stream()
-	    		.map(propertyMapper::convertToDto)
+	    		.map(propertyMapper::convertToEntityDto)
 	            .toList();
 	}
+	
+//	/**
+//	 * Obtener valoraciones de propiedades de un usuario
+//	 */
+//	public List<PriceEstimationDto> getAllValuationsByUser(String userId) {
+//		
+//		List<ValuationEntity> valuations = valuationRepository.findByUserId(userId);
+//	    //List<PropertyEntity> properties = propertyRepository.findByUserId(userId);
+//		
+//	    return valuations.stream()
+//	    		.map(propertyMapper::convertToEstimationDto)
+//	            .toList();
+//	}
 	
 	/**
 	 * Calcular Rango de precio del valor estimado de la vivienda
@@ -95,7 +114,7 @@ public class PropertyServiceImpl implements PropertyService {
      * Se almacena la propiedad junto con el usuario solicitante y los importes estimados para la vivienda
      */
     @Override
-    public PriceEstimationDto saveProperty(PropertyDto propertyDto, PriceEstimationDto estimationDto, UserDto userDto) {
+    public PropertyDto saveProperty(PropertyDto propertyDto, UserDto userDto) {
         PropertyEntity entity = new PropertyEntity();
 
         // Datos del inmueble
@@ -123,10 +142,10 @@ public class PropertyServiceImpl implements PropertyService {
         entity.setNeighborhood(propertyDto.getNeighborhood());
 
         // Estimaciones
-        entity.setMinSalePrice(estimationDto.getMinSalePrice());
-        entity.setMaxSalePrice(estimationDto.getMaxSalePrice());
-        entity.setMinRentalPrice(estimationDto.getMinRentalPrice());
-        entity.setMaxRentalPrice(estimationDto.getMaxRentalPrice());
+//        entity.setMinSalePrice(estimationDto.getMinSalePrice());
+//        entity.setMaxSalePrice(estimationDto.getMaxSalePrice());
+//        entity.setMinRentalPrice(estimationDto.getMinRentalPrice());
+//        entity.setMaxRentalPrice(estimationDto.getMaxRentalPrice());
 
         // Usuario asociado
         entity.setUserId(userDto.getId());
@@ -134,7 +153,10 @@ public class PropertyServiceImpl implements PropertyService {
         // Guardar en base de datos
         propertyRepository.save(entity);
 
-        return estimationDto;
+        PropertyDto response = propertyMapper.convertToEntityDto(entity);
+        
+        return response;
+        
     }
     
 }

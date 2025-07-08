@@ -1,0 +1,84 @@
+package com.universo.fsbo.service.impl;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.universo.fsbo.dto.PriceEstimationDto;
+import com.universo.fsbo.dto.UserDto;
+import com.universo.fsbo.dto.mapper.PropertyMapper;
+import com.universo.fsbo.entity.PropertyEntity;
+import com.universo.fsbo.entity.ValuationEntity;
+import com.universo.fsbo.repository.PropertyRepository;
+import com.universo.fsbo.repository.ValuationRepository;
+import com.universo.fsbo.service.ValuationService;
+
+@Service
+public class ValuationServiceImpl implements ValuationService {
+
+	@Autowired
+    private ValuationRepository valuationRepository;
+
+	@Autowired
+    private PropertyRepository propertyRepository;
+	
+	@Autowired
+	private PropertyMapper propertyMapper;
+	
+	/**
+	 * Obtener valoraciones de propiedades de un usuario
+	 */
+	@Override
+	public List<PriceEstimationDto> getAllValuationsByUser(String userId) {
+		
+		List<ValuationEntity> valuations = valuationRepository.findByUserId(userId);
+		
+	    return valuations.stream()
+	    		.map(propertyMapper::convertToEstimationDto)
+	            .toList();
+	}
+	
+	/**
+	 * Creacion del registro de Valoracion de la Propiedad
+	 */
+	@Override
+	public PriceEstimationDto saveValuation(PriceEstimationDto priceEstimation, UserDto userDto) {
+	    
+		// Obtener Entidad a partir del Id almacenado en Valuation
+	    PropertyEntity propertyEntity = propertyRepository.findById(priceEstimation.getPropertyId())
+	        .orElseThrow(() -> new RuntimeException("Property not found with ID: " + priceEstimation.getPropertyId()));
+
+	    // Creamos la entidad de valoración
+	    ValuationEntity valuation = new ValuationEntity();
+	    valuation.setProperty(propertyEntity);
+	    valuation.setUserId(userDto.getId());
+	    //valuation.setValuationDate(LocalDate.now());
+
+	    valuation.setMinSalePrice(priceEstimation.getMinSalePrice());
+	    valuation.setMaxSalePrice(priceEstimation.getMaxSalePrice());
+	    valuation.setMinRentalPrice(priceEstimation.getMinRentalPrice());
+	    valuation.setMaxRentalPrice(priceEstimation.getMaxRentalPrice());
+
+	    // Guardamos la valoración
+	    valuationRepository.save(valuation);
+
+	    // Creamos y devolvemos el DTO de respuesta
+//	    PriceEstimationDto response = new PriceEstimationDto();
+//	    response.setValuationId(valuation.getId());
+//	    response.setPropertyId(valuation.getProperty().getId());
+//	    response.setUserId(valuation.getUserId());
+//	    response.setMinSalePrice(valuation.getMinSalePrice());
+//	    response.setMaxSalePrice(valuation.getMaxSalePrice());
+//	    response.setMinRentalPrice(valuation.getMinRentalPrice());
+//	    response.setMaxRentalPrice(valuation.getMaxRentalPrice());
+//	    response.setValuationDate(valuation.getValuationDate());
+	    
+	    PriceEstimationDto response = propertyMapper.convertToEstimationDto(valuation);
+
+	    return response;
+	    
+	}
+
+}

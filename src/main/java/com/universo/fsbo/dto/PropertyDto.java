@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PropertyDto {
 
+	private Long propertyId; // ID de la propiedad asociada a la valoracion
+    private String userId;
+	
     // Block 1: Basic property data
     private String propertyType;
     private int builtArea;

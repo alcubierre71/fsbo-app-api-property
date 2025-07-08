@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: fsbo_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: fsbo_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: adminpass
+    ports:
+      - "5433:5432"
+    volumes:
+      - fsbo_pgdata:/var/lib/postgresql/data
+    networks:
+      - fsbo_net
+
+volumes:
+  fsbo_pgdata:
+
+networks:
+  fsbo_net:

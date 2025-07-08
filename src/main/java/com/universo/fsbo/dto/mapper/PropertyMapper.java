@@ -1,16 +1,27 @@
 package com.universo.fsbo.dto.mapper;
 
+import org.springframework.stereotype.Component;
+
 import com.universo.fsbo.dto.PriceEstimationDto;
 import com.universo.fsbo.dto.PropertyDto;
 import com.universo.fsbo.entity.PropertyEntity;
-import org.springframework.stereotype.Component;
+import com.universo.fsbo.entity.ValuationEntity;
 
 @Component
 public class PropertyMapper {
 
-    public PropertyDto convertToDto(PropertyEntity entity) {
+	/**
+	 * 
+	 * @param entity
+	 * @return
+	 */
+    public PropertyDto convertToEntityDto(PropertyEntity entity) {
+    	
         PropertyDto dto = new PropertyDto();
-
+        
+        dto.setPropertyId(entity.getId());
+        dto.setUserId(entity.getUserId());
+        
         dto.setPropertyType(entity.getPropertyType());
         dto.setBuiltArea(entity.getBuiltArea());
         dto.setBedrooms(entity.getBedrooms());
@@ -35,16 +46,29 @@ public class PropertyMapper {
         dto.setNeighborhood(entity.getNeighborhood());
 
         return dto;
+        
     }
 
-    public PriceEstimationDto convertToEstimationDto(PropertyEntity entity) {
+    /**
+     * 
+     * @param valuation
+     * @return
+     */
+    public PriceEstimationDto convertToEstimationDto(ValuationEntity valuation) {
+    	
         PriceEstimationDto estimation = new PriceEstimationDto();
 
-        estimation.setMinSalePrice(entity.getMinSalePrice());
-        estimation.setMaxSalePrice(entity.getMaxSalePrice());
-        estimation.setMinRentalPrice(entity.getMinRentalPrice());
-        estimation.setMaxRentalPrice(entity.getMaxRentalPrice());
+        estimation.setValuationId(valuation.getId());
+        estimation.setPropertyId(valuation.getProperty().getId());
+        estimation.setUserId(valuation.getUserId());
+        estimation.setValuationDate(valuation.getValuationDate());
+        
+        estimation.setMinSalePrice(valuation.getMinSalePrice());
+        estimation.setMaxSalePrice(valuation.getMaxSalePrice());
+        estimation.setMinRentalPrice(valuation.getMinRentalPrice());
+        estimation.setMaxRentalPrice(valuation.getMaxRentalPrice());
 
         return estimation;
+        
     }
 }

@@ -19,6 +19,9 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/property/**").permitAll() // permite el endpoint sin auth
+                .requestMatchers("/api/property/**", "POST").permitAll()
+                .requestMatchers("/actuator/**").permitAll()
+                .requestMatchers("/error").permitAll()
                 .anyRequest().authenticated() // resto requiere login si lo añades en el futuro
             )
             //.oauth2Login(Customizer.withDefaults()); // Enables OAuth2 Login

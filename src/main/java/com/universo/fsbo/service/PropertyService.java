@@ -9,9 +9,10 @@ import com.universo.fsbo.dto.UserDto;
 public interface PropertyService {
 
 	List<PropertyDto> getAllPropertiesByUser(String userId);
+	//List<PriceEstimationDto> getAllValuationsByUser(String userId);
 	
 	PriceEstimationDto calculatePriceRange(PropertyDto propertyDto);
 	
-	PriceEstimationDto saveProperty(PropertyDto propertyDto, PriceEstimationDto estimationDto, UserDto userDto);
+	PropertyDto saveProperty(PropertyDto propertyDto, UserDto userDto);
 	   
 }
