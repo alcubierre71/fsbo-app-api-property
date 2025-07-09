@@ -18,8 +18,12 @@ import com.universo.fsbo.dto.UserDto;
 import com.universo.fsbo.service.PropertyService;
 import com.universo.fsbo.service.ValuationService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/property")
+@Tag(name = "Valoraciones de Propiedades", description = "Endpoints para valorar propiedades")
 public class PropertyController {
 
 		@Autowired
@@ -34,6 +38,7 @@ public class PropertyController {
 		 * @return
 		 */
 		@GetMapping("/user/{userId}/properties")
+	    @Operation(summary = "Obtener Inmuebles del usuario", description = "Lista de inmuebles dados de alta por el usuario")
 		public ResponseEntity<List<PropertyDto>> getAllUserProperties(@PathVariable String userId) {
 		    List<PropertyDto> properties = propertyService.getAllPropertiesByUser(userId);
 		    return ResponseEntity.ok(properties);
@@ -45,6 +50,7 @@ public class PropertyController {
 		 * @return
 		 */
 		@GetMapping("/user/{userId}/valuations")
+	    @Operation(summary = "Obtener Valoraciones de Inmuebles realizadas por el usuario", description = "Valoraciones de los inmuebles del usuario")
 		public ResponseEntity<List<PriceEstimationDto>> getAllUserValuations(@PathVariable String userId) {
 		    List<PriceEstimationDto> valuations = valuationService.getAllValuationsByUser(userId);
 		    return ResponseEntity.ok(valuations);
@@ -57,19 +63,21 @@ public class PropertyController {
 		 * @return
 		 */
 	    @PostMapping("/valuation")
+	    @Operation(summary = "Calculo de precios estimados de venta y alquiler del inmueble", description = "Calcula segun las caracteristicas del inmueble")
 	    public ResponseEntity<PriceEstimationDto> estimatePrice(@RequestBody PropertyValuationRequestDto request) {
 
 	        PropertyDto propertyDto = request.getProperty();
 	        UserDto userDto = request.getUser();
 	        
-	        // logica de valoracion
-	        PriceEstimationDto estimation = propertyService.calculatePriceRange(propertyDto);
-
+	        // Invocacion al Agente para obtener la valoracion del inmueble
+	        //PriceEstimationDto estimation = propertyService.calculatePriceRange(propertyDto);
+	        PriceEstimationDto estimation = propertyService.estimatePrice(propertyDto);
+	        
 	        // logica de guardado de la Property
 	        PropertyDto propertyDtoSaved = new PropertyDto();
 	        // Primera Valoracion de la Propiedad
 	        if (propertyDto.getPropertyId() == null || propertyDto.getPropertyId() <= 0L) {
-	        	propertyDtoSaved = propertyService.saveProperty(propertyDto, userDto);
+	        	propertyDtoSaved = propertyService.saveProperty(propertyDto);
 	        } else {
 	        	// Nueva Valoracion de una Propiedad ya existente
 	        	propertyDtoSaved = propertyDto;

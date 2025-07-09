@@ -22,6 +22,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/property/**", "POST").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/error").permitAll()
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()   // endpoints del dashboard de swagger 
                 .anyRequest().authenticated() // resto requiere login si lo añades en el futuro
             )
             //.oauth2Login(Customizer.withDefaults()); // Enables OAuth2 Login

@@ -13,6 +13,7 @@ public class PropertyDto {
     private String userId;
 	
     // Block 1: Basic property data
+    private String alias;
     private String propertyType;
     private int builtArea;
     private int bedrooms;

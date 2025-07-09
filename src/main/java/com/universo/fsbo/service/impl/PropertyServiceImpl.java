@@ -7,12 +7,10 @@ import org.springframework.stereotype.Service;
 
 import com.universo.fsbo.dto.PriceEstimationDto;
 import com.universo.fsbo.dto.PropertyDto;
-import com.universo.fsbo.dto.UserDto;
 import com.universo.fsbo.dto.mapper.PropertyMapper;
 import com.universo.fsbo.entity.PropertyEntity;
-import com.universo.fsbo.entity.ValuationEntity;
+import com.universo.fsbo.feignclient.ValuationAgentClient;
 import com.universo.fsbo.repository.PropertyRepository;
-import com.universo.fsbo.repository.ValuationRepository;
 import com.universo.fsbo.service.PropertyService;
 
 @Service
@@ -23,6 +21,9 @@ public class PropertyServiceImpl implements PropertyService {
 	
 //	@Autowired
 //    private ValuationRepository valuationRepository;
+
+	@Autowired
+	private ValuationAgentClient valuationAgentClient;
 	
 	@Autowired
 	private PropertyMapper propertyMapper;
@@ -32,10 +33,15 @@ public class PropertyServiceImpl implements PropertyService {
 	 */
 	@Override
 	public List<PropertyDto> getAllPropertiesByUser(String userId) {
+		
 	    List<PropertyEntity> properties = propertyRepository.findByUserId(userId);
-	    return properties.stream()
-	    		.map(propertyMapper::convertToEntityDto)
+	    
+	    List<PropertyDto> dtos = properties.stream()
+	    		.map(propertyMapper::convertToPropertyDto)
 	            .toList();
+	    
+	    return dtos;
+	    
 	}
 	
 //	/**
@@ -51,6 +57,20 @@ public class PropertyServiceImpl implements PropertyService {
 //	            .toList();
 //	}
 	
+	/**
+	 * Invocacion al Agente IA para estimar la valoracion de la propiedad 
+	 */
+    @Override
+    public PriceEstimationDto estimatePrice(PropertyDto property) {
+    	
+    	// Invocacion al Agente IA Python para obtener la valoracion de la propiedad
+    	// Se invoca mediante cliente OpenFeign al endpoint de la API del Agente
+    	PriceEstimationDto estimation = valuationAgentClient.estimatePrice(property);
+    	
+        return estimation;
+        
+    }
+    
 	/**
 	 * Calcular Rango de precio del valor estimado de la vivienda
 	 */
@@ -108,52 +128,56 @@ public class PropertyServiceImpl implements PropertyService {
 
         return base;
     }
-
+    
     /**
      * Almacenar Propiedad
      * Se almacena la propiedad junto con el usuario solicitante y los importes estimados para la vivienda
      */
     @Override
-    public PropertyDto saveProperty(PropertyDto propertyDto, UserDto userDto) {
-        PropertyEntity entity = new PropertyEntity();
+    public PropertyDto saveProperty(PropertyDto propertyDto) {
+    	
+//        PropertyEntity entity = new PropertyEntity();
+//
+//        // Datos del inmueble
+//        entity.setAlias(propertyDto.getAlias());
+//        entity.setPropertyType(propertyDto.getPropertyType());
+//        entity.setBuiltArea(propertyDto.getBuiltArea());
+//        entity.setBedrooms(propertyDto.getBedrooms());
+//        entity.setBathrooms(propertyDto.getBathrooms());
+//        entity.setFloor(propertyDto.getFloor());
+//        entity.setCondition(propertyDto.getCondition());
+//        entity.setDescription(propertyDto.getDescription());
+//
+//        entity.setExterior(propertyDto.isExterior());
+//        entity.setHasElevator(propertyDto.isHasElevator());
+//        entity.setHasParking(propertyDto.isHasParking());
+//        entity.setHasStorageRoom(propertyDto.isHasStorageRoom());
+//        entity.setHasAirConditioning(propertyDto.isHasAirConditioning());
+//        entity.setHasBalconyOrTerrace(propertyDto.isHasBalconyOrTerrace());
+//        entity.setHasPool(propertyDto.isHasPool());
+//
+//        entity.setCountry(propertyDto.getCountry());
+//        entity.setRegion(propertyDto.getRegion());
+//        entity.setProvince(propertyDto.getProvince());
+//        entity.setCity(propertyDto.getCity());
+//        entity.setDistrict(propertyDto.getDistrict());
+//        entity.setNeighborhood(propertyDto.getNeighborhood());
+//
+//        // Estimaciones
+////        entity.setMinSalePrice(estimationDto.getMinSalePrice());
+////        entity.setMaxSalePrice(estimationDto.getMaxSalePrice());
+////        entity.setMinRentalPrice(estimationDto.getMinRentalPrice());
+////        entity.setMaxRentalPrice(estimationDto.getMaxRentalPrice());
+//
+//        // Usuario asociado
+//        entity.setUserId(propertyDto.getUserId());
 
-        // Datos del inmueble
-        entity.setPropertyType(propertyDto.getPropertyType());
-        entity.setBuiltArea(propertyDto.getBuiltArea());
-        entity.setBedrooms(propertyDto.getBedrooms());
-        entity.setBathrooms(propertyDto.getBathrooms());
-        entity.setFloor(propertyDto.getFloor());
-        entity.setCondition(propertyDto.getCondition());
-        entity.setDescription(propertyDto.getDescription());
-
-        entity.setExterior(propertyDto.isExterior());
-        entity.setHasElevator(propertyDto.isHasElevator());
-        entity.setHasParking(propertyDto.isHasParking());
-        entity.setHasStorageRoom(propertyDto.isHasStorageRoom());
-        entity.setHasAirConditioning(propertyDto.isHasAirConditioning());
-        entity.setHasBalconyOrTerrace(propertyDto.isHasBalconyOrTerrace());
-        entity.setHasPool(propertyDto.isHasPool());
-
-        entity.setCountry(propertyDto.getCountry());
-        entity.setRegion(propertyDto.getRegion());
-        entity.setProvince(propertyDto.getProvince());
-        entity.setCity(propertyDto.getCity());
-        entity.setDistrict(propertyDto.getDistrict());
-        entity.setNeighborhood(propertyDto.getNeighborhood());
-
-        // Estimaciones
-//        entity.setMinSalePrice(estimationDto.getMinSalePrice());
-//        entity.setMaxSalePrice(estimationDto.getMaxSalePrice());
-//        entity.setMinRentalPrice(estimationDto.getMinRentalPrice());
-//        entity.setMaxRentalPrice(estimationDto.getMaxRentalPrice());
-
-        // Usuario asociado
-        entity.setUserId(userDto.getId());
-
+        PropertyEntity entity = propertyMapper.convertToPropertyEntity(propertyDto);
+        
         // Guardar en base de datos
-        propertyRepository.save(entity);
+        PropertyEntity propertySaved = propertyRepository.save(entity);
 
-        PropertyDto response = propertyMapper.convertToEntityDto(entity);
+        PropertyDto response = propertyMapper.convertToPropertyDto(propertySaved);
         
         return response;
         

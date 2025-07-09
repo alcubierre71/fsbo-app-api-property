@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
@@ -23,10 +24,14 @@ public class PropertyEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String alias;
+    @NotBlank(message="El tipo de propiedad no puede estar en blanco")
     private String propertyType;
+    @Positive(message="La superficie construida debe ser un numero positivo")
     private int builtArea;
     private int bedrooms;
     private int bathrooms;
+    @NotNull(message="El piso no puede ser nulo")
     private int floor;
     private String condition;
     private String description;

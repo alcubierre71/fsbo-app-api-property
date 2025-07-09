@@ -9,7 +9,7 @@ import com.universo.fsbo.entity.PropertyEntity;
 
 @Repository
 public interface PropertyRepository extends JpaRepository<PropertyEntity, Long> {
-
+	
     // Buscar inmuebles por ID de usuario
     List<PropertyEntity> findByUserId(String userId);
 
