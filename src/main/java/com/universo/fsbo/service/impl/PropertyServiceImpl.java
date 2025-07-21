@@ -13,6 +13,8 @@ import com.universo.fsbo.feignclient.ValuationAgentClient;
 import com.universo.fsbo.repository.PropertyRepository;
 import com.universo.fsbo.service.PropertyService;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class PropertyServiceImpl implements PropertyService {
 
@@ -42,6 +44,22 @@ public class PropertyServiceImpl implements PropertyService {
 	    
 	    return dtos;
 	    
+	}
+	
+	/**
+	 * Obtener Propiedad a partir de su Id
+	 */
+	@Override
+	public PropertyDto getPropertyById(Long propertyId) {
+		
+		PropertyEntity property = propertyRepository.findById(propertyId).orElseThrow(
+				() -> new EntityNotFoundException("No se encontró la propiedad con ID: " + propertyId)
+		);
+		
+		PropertyDto dto = propertyMapper.convertToPropertyDto(property);
+		
+		return dto;
+		
 	}
 	
 //	/**

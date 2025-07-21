@@ -18,9 +18,9 @@ VALUES
 (5, 'Propiedad E', 'Dúplex', 120, 4, 2, 3, 'Buen estado', 'Dúplex amplio con parking.', true, true, true, false, false, true, false,
  'España', 'Galicia', 'A Coruña', 'Santiago', 'Casco Histórico', 'Vite', 'user5', CURRENT_TIMESTAMP),
 (6, 'Propiedad F', 'Apartamento', 60, 2, 1, 4, 'Reformado', 'Apartamento céntrico y moderno.', true, false, false, false, true, false, false,
- 'España', 'País Vasco', 'Bizkaia', 'Bilbao', 'Abando', 'Indautxu', 'user6', CURRENT_TIMESTAMP),
+ 'España', 'País Vasco', 'Bizkaia', 'Bilbao', 'Abando', 'Indautxu', 'user1', CURRENT_TIMESTAMP),
 (7, 'Propiedad G', 'Piso', 90, 3, 2, 1, 'Nuevo', 'Piso en zona residencial.', true, true, true, false, false, true, true,
- 'España', 'Castilla y León', 'Valladolid', 'Valladolid', 'Centro', 'Rondilla', 'user7', CURRENT_TIMESTAMP);
+ 'España', 'Castilla y León', 'Valladolid', 'Valladolid', 'Centro', 'Rondilla', 'user1', CURRENT_TIMESTAMP);
 
  INSERT INTO valuations (property_id, user_id, min_sale_price, max_sale_price, min_rental_price, max_rental_price, valuation_date)
 VALUES
@@ -29,5 +29,5 @@ VALUES
 (3, 'user3', 450000, 520000, 1500, 1800, '2025-06-01'),
 (4, 'user4', 95000, 110000, 400, 550, '2025-06-01'),
 (5, 'user5', 260000, 300000, 1000, 1250, '2025-06-01'),
-(6, 'user6', 140000, 165000, 600, 800, '2025-06-01'),
-(7, 'user7', 200000, 230000, 750, 950, '2025-06-01');
+(6, 'user1', 140000, 165000, 600, 800, '2025-06-01'),
+(7, 'user1', 200000, 230000, 750, 950, '2025-06-01');

@@ -11,6 +11,8 @@ public interface PropertyService {
 	List<PropertyDto> getAllPropertiesByUser(String userId);
 	//List<PriceEstimationDto> getAllValuationsByUser(String userId);
 	
+	PropertyDto getPropertyById (Long propertyId);
+	
 	PriceEstimationDto estimatePrice(PropertyDto property);	
 	
 	PriceEstimationDto calculatePriceRange(PropertyDto propertyDto);

@@ -46,7 +46,7 @@ public class ValuationServiceImpl implements ValuationService {
 	 * Creacion del registro de Valoracion de la Propiedad
 	 */
 	@Override
-	public PriceEstimationDto saveValuation(PriceEstimationDto priceEstimation, UserDto userDto) {
+	public PriceEstimationDto saveValuation(PriceEstimationDto priceEstimation) {
 	    
 //		// Obtener Entidad a partir del Id almacenado en Valuation
 //	    PropertyEntity propertyEntity = propertyRepository.findById(priceEstimation.getPropertyId())
@@ -70,7 +70,8 @@ public class ValuationServiceImpl implements ValuationService {
 	    ValuationEntity valuation = propertyMapper.convertToValuationEntity(priceEstimation);
 	    
 	    // Le asociamos el usuario a la Valoracion de la propiedad
-	    valuation.setUserId(userDto.getId());
+	    String userId = priceEstimation.getUserId(); 
+	    valuation.setUserId(userId);
 	    
 	    // Guardamos la valoración
 	    ValuationEntity valuationSaved = valuationRepository.save(valuation);

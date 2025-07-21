@@ -10,6 +10,6 @@ public interface ValuationService {
 
 	List<PriceEstimationDto> getAllValuationsByUser(String userId);
 	
-	PriceEstimationDto saveValuation(PriceEstimationDto estimationDto, UserDto userDto);
+	PriceEstimationDto saveValuation(PriceEstimationDto estimationDto);
 	
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/api/property")
 @Tag(name = "Valoraciones de Propiedades", description = "Endpoints para valorar propiedades")
+@CrossOrigin
 public class PropertyController {
 
 		@Autowired
@@ -45,6 +47,22 @@ public class PropertyController {
 		}
 
 		/**
+		 * Obtencion de propiedad a partir de su Id
+		 * @param propertyId
+		 * @return
+		 */
+		@GetMapping("/id/{propertyId}")
+		@Operation(summary = "Obtener Propiedad mediante Id", description = "Obtener datos de la propiedad a partir de su Id")
+		public ResponseEntity<PropertyDto> getPropertyById(@PathVariable Long propertyId) {
+			
+			PropertyDto property = propertyService.getPropertyById(propertyId);
+			
+			return ResponseEntity.ok(property);
+			
+		}
+		
+		
+		/**
 		 * Obtencion de todas las Valoraciones de Properties solicitadas por un usuario
 		 * @param userId
 		 * @return
@@ -64,10 +82,12 @@ public class PropertyController {
 		 */
 	    @PostMapping("/valuation")
 	    @Operation(summary = "Calculo de precios estimados de venta y alquiler del inmueble", description = "Calcula segun las caracteristicas del inmueble")
-	    public ResponseEntity<PriceEstimationDto> estimatePrice(@RequestBody PropertyValuationRequestDto request) {
+	    //public ResponseEntity<PriceEstimationDto> estimatePrice(@RequestBody PropertyValuationRequestDto request) {
+	    public ResponseEntity<PriceEstimationDto> estimatePrice(@RequestBody PropertyDto request) {
 
-	        PropertyDto propertyDto = request.getProperty();
-	        UserDto userDto = request.getUser();
+	        //PropertyDto propertyDto = request.getProperty();
+	        //UserDto userDto = request.getUser();
+	    	PropertyDto propertyDto = request;
 	        
 	        // Invocacion al Agente para obtener la valoracion del inmueble
 	        //PriceEstimationDto estimation = propertyService.calculatePriceRange(propertyDto);
@@ -87,7 +107,7 @@ public class PropertyController {
 	        estimation.setPropertyId(propertyDtoSaved.getPropertyId());
 	        
 	        // logica de guardado de Valuation de Property
-	        PriceEstimationDto estimationSaved = valuationService.saveValuation(estimation, userDto);
+	        PriceEstimationDto estimationSaved = valuationService.saveValuation(estimation);
 
 	        return ResponseEntity.ok(estimationSaved);
 	    	
