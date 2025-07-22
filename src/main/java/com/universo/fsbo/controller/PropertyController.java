@@ -61,7 +61,23 @@ public class PropertyController {
 			
 		}
 		
+		/**
+		 * Crear nueva propiedad
+		 * @param request
+		 * @return
+		 */
+		@GetMapping("/save")
+		@Operation(summary = "Crear Propiedad nueva", description = "Crear nueva propiedad")
+		public ResponseEntity<PropertyDto> saveProperty(@RequestBody PropertyDto request) {
+			
+			PropertyDto property = propertyService.saveProperty(request);
+			
+			return ResponseEntity.ok(property);
+			
+		}
 		
+		
+	
 		/**
 		 * Obtencion de todas las Valoraciones de Properties solicitadas por un usuario
 		 * @param userId
@@ -103,8 +119,9 @@ public class PropertyController {
 	        	propertyDtoSaved = propertyDto;
 	        }
 	        
-	        // Enlazamos la Valoracion con el Id de la Propiedad
+	        // Enlazamos la Valoracion con el Id de la Propiedad y el Id del Usuario
 	        estimation.setPropertyId(propertyDtoSaved.getPropertyId());
+	        estimation.setUserId(propertyDtoSaved.getUserId());
 	        
 	        // logica de guardado de Valuation de Property
 	        PriceEstimationDto estimationSaved = valuationService.saveValuation(estimation);
