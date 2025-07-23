@@ -94,6 +94,10 @@ public class PropertyMapper {
     public PropertyEntity convertToPropertyEntity (PropertyDto propertyDto) {
     	
         PropertyEntity entity = new PropertyEntity();
+        
+        if (propertyDto.getPropertyId() != null && propertyDto.getPropertyId() > 0L) {
+        	entity.setId(propertyDto.getPropertyId());
+        }
 
         // Datos del inmueble
         entity.setAlias(propertyDto.getAlias());

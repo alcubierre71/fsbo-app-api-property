@@ -18,5 +18,7 @@ public interface PropertyService {
 	PriceEstimationDto calculatePriceRange(PropertyDto propertyDto);
 	
 	PropertyDto saveProperty(PropertyDto propertyDto);
+	
+	//PropertyDto updateProperty(PropertyDto propertyDto);
 	   
 }

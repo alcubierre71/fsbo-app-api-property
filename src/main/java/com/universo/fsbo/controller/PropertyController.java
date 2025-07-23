@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.universo.fsbo.dto.PriceEstimationDto;
 import com.universo.fsbo.dto.PropertyDto;
-import com.universo.fsbo.dto.PropertyValuationRequestDto;
-import com.universo.fsbo.dto.UserDto;
+import com.universo.fsbo.entity.PropertyEntity;
 import com.universo.fsbo.service.PropertyService;
 import com.universo.fsbo.service.ValuationService;
 
@@ -66,7 +66,7 @@ public class PropertyController {
 		 * @param request
 		 * @return
 		 */
-		@GetMapping("/save")
+		@PostMapping("/save")
 		@Operation(summary = "Crear Propiedad nueva", description = "Crear nueva propiedad")
 		public ResponseEntity<PropertyDto> saveProperty(@RequestBody PropertyDto request) {
 			
@@ -76,7 +76,22 @@ public class PropertyController {
 			
 		}
 		
-		
+		/**
+		 * Actualiar propiedad
+		 * @param request
+		 * @return
+		 */
+		@PutMapping("/update/{propertyId}")
+		@Operation(summary = "Actualizar Propiedad", description = "Actualiar propiedad ya existente")
+		public ResponseEntity<PropertyDto> updateProperty(@PathVariable Long propertyId, @RequestBody PropertyDto updatedProperty) {
+			
+			PropertyDto existingProperty = propertyService.getPropertyById(propertyId);
+			
+			PropertyDto property = propertyService.saveProperty(updatedProperty);
+			
+			return ResponseEntity.ok(property);
+			
+		}
 	
 		/**
 		 * Obtencion de todas las Valoraciones de Properties solicitadas por un usuario
